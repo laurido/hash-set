@@ -7,7 +7,7 @@ from typing import (
 T = TypeVar('T')
 
 
-class HashSet(Generic[T]):
+class HashSet2(Generic[T]):
     """Set implementation using a hash table."""
 
     size: int
@@ -28,9 +28,9 @@ class HashSet(Generic[T]):
         for value in seq:
             self.add(value)
 
-    def _get_bin(self, element: T) -> list[T]:
+    def _get_bin(self, toupe) -> list[T]:
         """Get the list (bin) that element should sit in."""
-        hash_val = hash(element)
+        hash_val = toupe[1]
         index = hash_val % self.size
         return self.array[index]
 
@@ -44,24 +44,26 @@ class HashSet(Generic[T]):
             for x in b:
                 self.add(x)
 
-    def add(self, element: T) -> None:
+    def add(self, element) -> None:
         """Add element to the set."""
-        b = self._get_bin(element)
+        toupe = [element, hash(element)]
+        b = self._get_bin(el)
         if element not in b:
             b.append(element)
             self.used += 1
             if self.used > self.size / 2:
                 self._resize(int(2 * self.size))
 
-    def remove(self, element: T) -> None:
+    def remove(self, element) -> None:
         """Remove element from the set."""
         b = self._get_bin(element)
-        if element not in b:
-            raise KeyError(element)
+        if element[0] not in b:
+            raise KeyError(element[0])
         b.remove(element)
         self.used -= 1
         if self.used < self.size / 4:
             self._resize(int(self.size / 2))
+        
 
     def __iter__(self) -> Iterator[T]:
         """Iterate through all the elements in the set."""
@@ -72,10 +74,12 @@ class HashSet(Generic[T]):
         """Test if the set is non-empty."""
         return self.used > 0
 
-    def __contains__(self, element: T) -> bool:
+    def __contains__(self, element) -> bool:
         """Test if element is in the set."""
-        return element in self._get_bin(element)
+        return element in [t[0] for t in self._get_bin(element)]
 
     def __repr__(self) -> str:
         """Get representation string."""
         return 'HashTableSet(' + repr(tuple(self)) + ')'
+    def show_bins(self):
+        print(self.array)
